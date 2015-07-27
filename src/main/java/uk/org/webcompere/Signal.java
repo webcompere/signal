@@ -1,6 +1,5 @@
 package uk.org.webcompere;
 
-
 /**
  * Represents a flag which can be set or waited for - once signalled, things waiting for it don't block
  */
@@ -17,7 +16,7 @@ public class Signal {
 	
 	/**
 	 * Wait up to timeout for the signal
-	 * @param timeout timeout in milliseconds
+	 * @param timeout timeout in milliseconds - this will be honoured unless wait wakes up spuriously
 	 * @throws InterruptedException
 	 */
 	public synchronized void waitForSignal(long timeout) throws InterruptedException {
@@ -31,7 +30,8 @@ public class Signal {
 	 * @throws InterruptedException on thread error
 	 */
 	public synchronized void waitForSignal() throws InterruptedException {
-		if (!signalled) {
+		// as wait can wake up spuriously, put this in a loop
+		while (!signalled) {
 			wait();
 		}
 	}
